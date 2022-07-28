@@ -1,11 +1,50 @@
 from chalice import Chalice
-
+import base64, json, random
+import requests
 app = Chalice(app_name='backend')
 
 
-@app.route('/')
+@app.route('/realFace')
 def index():
-    return {'hello': 'bye'}
+    number = random.randrange(0,999)
+
+    if 100 <= number <= 999:
+
+        with open("00000/00" + str(number) + ".png", "rb") as image:
+            f = image.read()
+            
+            return base64.b64encode(f)
+
+    elif 10 <= number <= 99:
+        with open("00000/000" + str(number) + ".png", "rb") as image:
+            f = image.read()
+            return base64.b64encode(f)
+    else:
+        with open("00000/0000" + str(number) + ".png", "rb") as image:
+            f = image.read()
+            return base64.b64encode(f)
+
+
+@app.route('/AIFace')
+def face():
+    r = requests.get('https://api.generated.photos/api/v1/faces?api_key=pmturXvb_bFbm05gIjjkTA')
+    faceList = r.json()["faces"]
+
+    workingFace = random.choice(faceList)
+
+    return workingFace["urls"][-1]["512"]
+
+
+
+   
+
+
+
+    
+
+    
+
+    
 
 
 # The view function above will return {"hello": "world"}
