@@ -1,9 +1,8 @@
 import Head from 'next/head'
-import Image from 'next/image'
+//import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import picOne from '../assets/00005.png'
 import picTwo from '../assets/00022.png'
-import points from '../logic/points.js'
 
 function selectImage() {
   alert("TEST");
@@ -30,7 +29,7 @@ export default function Home() {
         <div className={styles.grid}>
 
           <div onClick={selectImage} className={styles.card}>
-              <Image
+              <img
                 src={picOne}
                 alt="Picture"
                 width="300px"
@@ -39,17 +38,13 @@ export default function Home() {
           </div>
 
           <div onClick={selectImage} className={styles.card}>
-            <Image
+            <img
               src={picTwo}
               alt="Picture"
               width="300px"
               height="300px"
             />
           </div>
-
-
-
-
         </div>
       </main>
     </div>
