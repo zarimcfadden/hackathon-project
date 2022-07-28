@@ -6,9 +6,9 @@ app = Chalice(app_name='backend')
 
 @app.route('/realFace')
 def index():
-    number = random.randrange(0,999)
+    number = random.randrange(0,300)
 
-    if 100 <= number <= 999:
+    if 100 <= number <= 300:
 
         with open("00000/00" + str(number) + ".png", "rb") as image:
             f = image.read()
