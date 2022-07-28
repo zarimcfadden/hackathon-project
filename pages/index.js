@@ -1,15 +1,47 @@
 import Head from 'next/head'
 //import Image from 'next/image'
 import styles from '../styles/Home.module.css'
-import picOne from '../assets/00005.png'
-import picTwo from '../assets/00022.png'
-
-function selectImage() {
-  alert("TEST");
-  // alert(JSON.stringify(points));
-}
+import { points } from '../logic/points.js'
 
 export default function Home() {
+  let test = 100;
+  var clickable = true;
+  var countdown = 10;
+  var correctText;
+  var pointCount = 0;
+
+  function timer() {
+    //let int = 
+    setInterval(() => {
+      // document.querySelector('#countdownText').innerText = countdown;
+      countdown--;
+      console.log("Countdown: " + countdown);
+    }, 1000);
+  }
+  //timer();
+
+  function selectImage(x) {
+    if (clickable) {
+      clickable = false;
+    } else {
+      return;
+    }
+  
+    var p = points(x);
+    if (p) {
+      pointCount += 10;
+      correctText = "Correct!";
+    }
+    else {
+      correctText = "Incorrect!";
+    }
+
+    document.querySelector('#correctText').innerText = correctText;
+    document.querySelector('#pointText').innerText = `Points: ${pointCount}`;
+    pointCount++;
+    document.querySelectorAll('.photo')[x].style.cssText = (p) ? "border: 5px solid green;" : "border: 5px solid red;";
+  }
+  
   return (
     <div className={styles.container}>
       <Head>
@@ -20,32 +52,42 @@ export default function Home() {
 
       <main className={styles.main}>
 
+        <div id="timer" className={styles.timer}>
+          <div id="countdownText" className={styles.countdownText}>
+            <p>{countdown}</p>
+          </div>
+          <svg className={styles.svg}>
+            <circle r="50" cx="50" cy="50"></circle>
+          </svg>
+        </div>
+
         <h1 className={styles.title}>
           Choose the real human
         </h1>
-        
-        <h2>Points: 0</h2>
-        
-        <div className={styles.grid}>
 
-          <div onClick={selectImage} className={styles.card}>
+        <div className={styles.grid} onLoad={timer()}>
+
+          <div onClick={() => selectImage(0)} className={`${styles.card} photo`}>
               <img
-                src={picOne}
+                src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg"
                 alt="Picture"
-                width="300px"
-                height="300px"
+                width="250px"
+                height="250px"
               />
           </div>
 
-          <div onClick={selectImage} className={styles.card}>
+          <div onClick={() => selectImage(1)} className={`${styles.card} photo`}>
             <img
-              src={picTwo}
+              src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg"
               alt="Picture"
-              width="300px"
-              height="300px"
+              width="250px"
+              height="250px"
             />
           </div>
         </div>
+
+        <div id="correctText"></div>
+        <div id="pointText">Points: {pointCount}</div>
       </main>
     </div>
   )
