@@ -1,3 +1,0 @@
-function points() {
-    alert("hello");
-}
