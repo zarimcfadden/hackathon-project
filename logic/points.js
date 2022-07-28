@@ -5,6 +5,5 @@ export function decideCorrectImage() {
 }
 
 export function points(x) {
-    var correctVal = decideCorrectImage();
     return x === decideCorrectImage() ? true : false;
 }
