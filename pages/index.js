@@ -1,33 +1,37 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
-import picOne from '../assets/00005.png'
-import picTwo from '../assets/00022.png'
 import { points } from '../logic/points.js'
-
-var clickable = true;
-var countdown = 10;
-var correctText;
-
-function timer() {
-  let int = setInterval(() => {
-    document.querySelector('#countdownText').innerText = countdown;
-    countdown--;
-  }, 1000);
-}
-
-function selectImage(x) {
-  if (clickable) {
-    clickable = false;
-  } else {
-    return;
-  }
-
-  var p = points(x);
-  document.querySelectorAll('.photo')[x].style.cssText = (p) ? "border: 5px solid green;" : "border: 5px solid red;";
-}
+import { useState } from 'react';
+import image from '../image.jpeg'
 
 export default function Home() {
+  var countdown = 10;
+  var correctText;
+  const [userPoints, setUserPoints] = useState(0);
+  const [clickable, setClickable] = useState(true);
+
+  function timer() {
+    let int = setInterval(() => {
+      document.querySelector('#countdownText').innerText = countdown;
+      (countdown <= 0) ? countdown = 0 : countdown--;
+    }, 1000);
+  }
+
+  function selectImage(x) {
+    if (clickable) {
+      setClickable(false);
+    } else {
+      return;
+    }
+
+    var p = points(x);
+    document.querySelectorAll('.photo')[x].style.cssText = (p) ? "border: 5px solid green;" : "border: 5px solid red;";
+    // document.querySelector('#points').innerText = (p) ? userPoints + 10 : userPoints;
+    // userPoints += 10;
+    setUserPoints(userPoints+10);
+  }
+
   return (
     <div className={styles.container}>
       <Head>
@@ -38,10 +42,10 @@ export default function Home() {
 
       <main className={styles.main}>
 
-        <div id="timer" className={styles.timer}>
-          <div id="countdownText" className={styles.countdownText}></div>
+        <div id="countdown" className={styles.countdown}>
+          <div id="countdownText" className={styles.countdownText}>10</div>
           <svg className={styles.svg}>
-            <circle r="50" cx="50" cy="50"></circle>
+            <circle r="45" cx="50" cy="50"></circle>
           </svg>
         </div>
 
@@ -56,7 +60,7 @@ export default function Home() {
           <div onClick={() => selectImage(0)} className={`${styles.card} photo`}>
             <Image
               className={styles.img}
-              src={picOne}
+              src={image}
               alt="Picture"
               width="300px"
               height="300px"
@@ -66,7 +70,7 @@ export default function Home() {
           <div onClick={() => selectImage(1)} className={`${styles.card} photo`}>
             <Image
               className={styles.img}
-              src={picTwo}
+              src={image}
               alt="Picture"
               width="300px"
               height="300px"
@@ -76,7 +80,8 @@ export default function Home() {
 
         </div>
 
-        <h2>Points: 0</h2>
+        <h2 id="points">Points: {userPoints}</h2>
+        
       </main>
     </div>
   )
