@@ -7,7 +7,7 @@ app = Chalice(app_name='backend')
 @app.route('/realFace')
 def index():
     number = random.randrange(0,300)
-    print(number)
+    
 
     if 100 <= number <= 300:
 
