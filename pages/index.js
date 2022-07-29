@@ -7,20 +7,56 @@ import image from '../image.jpeg'
 
 export default function Home() {
   const [userPoints, setUserPoints] = useState(0);
-  const [clickable, setClickable] = useState(true);
+  const [selected, setSelected] = useState(-1);
   const [countdown, setCountdown] = useState(10);
   const [correctText0, setCorrectText0] = useState('');
   const [incorrectText0, setIncorrectText0] = useState('');
   const [correctText1, setCorrectText1] = useState('');
   const [incorrectText1, setIncorrectText1] = useState('');
+  const [iteration, setIteration] = useState(0);
+  const [clickable, setClickable] = useState(true);
+
+  function reset_animation() {
+    var el = document.querySelector('svg circle');
+    el.style.animationName = "none";
+
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        el.style.animationName = ""
+      }, 0);
+    });
+
+    el.style.animationPlayState = '';
+  }
+
+  function resetText() {
+    setCorrectText0('');
+    setCorrectText1('');
+    setIncorrectText0('');
+    setIncorrectText1('');
+  }
 
   useEffect(() => {
     setTimeout(() => {
-      if (countdown-1 <= 0) {
-        document.querySelector('#countdown').style.display = 'none';
-        // result();
+      if (countdown-1 == 0) {
+        document.querySelector('svg circle').style.animationPlayState = 'paused';
+        document.querySelector('svg circle').style.animationDelay = '0s';
       }
+
       if (countdown >= 1) setCountdown(countdown-1);
+
+      if (countdown == 0) {
+        result();
+        setCountdown(10);
+        if (iteration%2 == 0) {
+          setClickable(false);
+        } else {
+          resetText();
+          setClickable(true);
+        }
+        setIteration(iteration+1);
+        reset_animation();
+      }
     }, 1000);
   }, [countdown]);
 
@@ -28,32 +64,30 @@ export default function Home() {
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
-  function result(correct, selected) {
-    var t = `${percent(40, 60)}% players chose this option`;
-    console.log(selected, correct)
-    if (correct) {
-      (selected == 0) ? setCorrectText0(t) : setCorrectText1(t);
+  function result() {
+    let correct = points(selected);
+    let t = `${percent(40, 60)}% players chose this option`;
+    
+    if (selected >= 0) {
+      if (correct) {
+        (selected == 0) ? setCorrectText0(t) : setCorrectText1(t);
+        setUserPoints(userPoints+10);
+      } else {
+        (selected == 0) ? setIncorrectText0(t) : setIncorrectText1(t);
+      }
     } else {
-      (selected == 0) ? setIncorrectText0(t) : setIncorrectText1(t);
+      (correct = 0) ? setCorrectText0(t) : setCorrectText1(t);
     }
+    
   }
 
   function selectImage(selected) {
     if (clickable) {
-      setClickable(false);
-    } else {
-      return;
+      setSelected(selected);
+      document.querySelectorAll('.photo')[0].style.cssText = "";
+      document.querySelectorAll('.photo')[1].style.cssText = "";
+      document.querySelectorAll('.photo')[selected].style.cssText = "border: 5px solid white;";
     }
-
-    setCountdown(0);
-    document.querySelector('#countdown').style.display = 'none';
-
-    var correct = points(selected);
-    document.querySelectorAll('.photo')[selected].style.cssText = (correct) ? "border: 5px solid green;" : "border: 5px solid red;";
-    (selected == 0) ? document.querySelectorAll('.photo')[1].style.cssText = "border: 5px solid black;" : document.querySelectorAll('.photo')[0].style.cssText = "border: 5px solid black;";
-    setUserPoints(userPoints+10);
-
-    result(correct, selected);
   }
 
   return (
