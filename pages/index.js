@@ -2,34 +2,58 @@ import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import { points } from '../logic/points.js'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import image from '../image.jpeg'
 
 export default function Home() {
-  var countdown = 10;
-  var correctText;
   const [userPoints, setUserPoints] = useState(0);
   const [clickable, setClickable] = useState(true);
+  const [countdown, setCountdown] = useState(10);
+  const [correctText0, setCorrectText0] = useState('');
+  const [incorrectText0, setIncorrectText0] = useState('');
+  const [correctText1, setCorrectText1] = useState('');
+  const [incorrectText1, setIncorrectText1] = useState('');
 
-  function timer() {
-    let int = setInterval(() => {
-      document.querySelector('#countdownText').innerText = countdown;
-      (countdown <= 0) ? countdown = 0 : countdown--;
+  useEffect(() => {
+    setTimeout(() => {
+      if (countdown-1 <= 0) {
+        document.querySelector('#countdown').style.display = 'none';
+        // result();
+      }
+      if (countdown >= 1) setCountdown(countdown-1);
     }, 1000);
+  }, [countdown]);
+
+  function percent(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
-  function selectImage(x) {
+  function result(correct, selected) {
+    var t = `${percent(40, 60)}% players chose this option`;
+    console.log(selected, correct)
+    if (correct) {
+      (selected == 0) ? setCorrectText0(t) : setCorrectText1(t);
+    } else {
+      (selected == 0) ? setIncorrectText0(t) : setIncorrectText1(t);
+    }
+  }
+
+  function selectImage(selected) {
     if (clickable) {
       setClickable(false);
     } else {
       return;
     }
 
-    var p = points(x);
-    document.querySelectorAll('.photo')[x].style.cssText = (p) ? "border: 5px solid green;" : "border: 5px solid red;";
-    // document.querySelector('#points').innerText = (p) ? userPoints + 10 : userPoints;
-    // userPoints += 10;
+    setCountdown(0);
+    document.querySelector('#countdown').style.display = 'none';
+
+    var correct = points(selected);
+    document.querySelectorAll('.photo')[selected].style.cssText = (correct) ? "border: 5px solid green;" : "border: 5px solid red;";
+    (selected == 0) ? document.querySelectorAll('.photo')[1].style.cssText = "border: 5px solid black;" : document.querySelectorAll('.photo')[0].style.cssText = "border: 5px solid black;";
     setUserPoints(userPoints+10);
+
+    result(correct, selected);
   }
 
   return (
@@ -43,7 +67,7 @@ export default function Home() {
       <main className={styles.main}>
 
         <div id="countdown" className={styles.countdown}>
-          <div id="countdownText" className={styles.countdownText}>10</div>
+          <div id="countdownText" className={styles.countdownText}>{countdown}</div>
           <svg className={styles.svg}>
             <circle r="45" cx="50" cy="50"></circle>
           </svg>
@@ -53,35 +77,43 @@ export default function Home() {
           Choose the real human
         </h1>
         
-        <h2>{correctText}</h2>
-        
         <div className={styles.grid}>
 
-          <div onClick={() => selectImage(0)} className={`${styles.card} photo`}>
-            <Image
-              className={styles.img}
-              src={image}
-              alt="Picture"
-              width="300px"
-              height="300px"
-            />
-          </div>
+          <div>
+            <div onClick={() => selectImage(0)} className={`${styles.card} photo`}>
+              <Image
+                className={styles.img}
+                src={image}
+                alt="Picture"
+                width="300px"
+                height="300px"
+              />
+            </div>
 
-          <div onClick={() => selectImage(1)} className={`${styles.card} photo`}>
-            <Image
-              className={styles.img}
-              src={image}
-              alt="Picture"
-              width="300px"
-              height="300px"
-              onLoad={ () => {timer();} }
-            />
+            <h3 className={styles.correctText}>{correctText0}</h3>
+            <h3 className={styles.incorrectText}>{incorrectText0}</h3>
           </div>
+          
+          <div>
+            <div onClick={() => selectImage(1)} className={`${styles.card} photo`}>
+              <Image
+                className={styles.img}
+                src={image}
+                alt="Picture"
+                width="300px"
+                height="300px"
+                onLoad={ () => { setCountdown(10); } }
+              />
+            </div>
 
+            <h3 className={styles.correctText}>{correctText1}</h3>
+            <h3 className={styles.incorrectText}>{incorrectText1}</h3>
+          </div>
+    
         </div>
 
         <h2 id="points">Points: {userPoints}</h2>
-        
+
       </main>
     </div>
   )
