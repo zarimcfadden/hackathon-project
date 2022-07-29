@@ -1,3 +1,5 @@
+
+
 .container {
   padding: 0 2rem;
 }
@@ -146,7 +148,7 @@
 }
 
 .countdownText {
-  color: white;
+  color: black;
   position:relative;
   top: 50%;
   font-size: 40px;
@@ -176,7 +178,7 @@
 @keyframes countdown {
   from {
     stroke-dashoffset: 0px;
-    stroke: white;
+    stroke: var(--stroke);
   }
   to {
     stroke-dashoffset: 281px;
@@ -192,4 +194,10 @@
 .incorrectText {
   text-align: center;
   color: red;
+}
+
+.dark {
+  position: absolute;
+  top: 10px;
+  left: 10px;
 }

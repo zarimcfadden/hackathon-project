@@ -1,9 +1,9 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
-import { points, getFace } from '../logic/points.js'
-import { useEffect, useState } from 'react';
-import image from '../image.jpeg'
+import { points, getFace, getSnacks } from '../logic/points.js'
+import React, { useEffect, useState } from 'react';
+import { ReactDOM } from 'react-dom';
 
 export default function Home() {
   const [userPoints, setUserPoints] = useState(0);
@@ -17,15 +17,34 @@ export default function Home() {
   const [clickable, setClickable] = useState(true);
   const [title, setTitle] = useState('Choose the REAL human');
 
-  const [img0, setImg0] = useState(image);
-  const [img1, setImg1] = useState(image);
+  const [img0, setImg0] = useState();
+  const [img1, setImg1] = useState();
 
   function end() {
     console.log('here')
     document.querySelector('#countdown').style.display = 'none';
     document.querySelector('#points').style.display = 'none';
-    document.querySelector(`.${styles.title}`).style.display = 'none';
+    // document.querySelector(`.${styles.title}`).style.display = 'none';
     document.querySelector(`.${styles.grid}`).style.display = 'none';
+    document.querySelector(`.${styles.title}`).style.fontSize = '30px';
+    document.querySelector(`.${styles.title}`).style.position = 'absolute';
+    document.querySelector(`.${styles.title}`).style.top = '30%';
+    document.querySelector(`.${styles.title}`).style.margin = '0 30px 0 30px';
+    setTitle('Your turns are up for this pump, thank you for playing! You can use the points you earned on the variety of snacks we offer.')
+  }
+
+  function toggleDark() {
+    if (document.querySelector('body').style.background != 'black') {
+      document.querySelector('body').style.background = 'black';
+      document.querySelector('body').style.color = 'white';
+      document.querySelector('#countdownText').style.color = 'white';
+      document.documentElement.style.setProperty('--stroke', 'white');
+    } else {
+      document.querySelector('body').style.background = 'rgb(221, 221, 221)';
+      document.querySelector('body').style.color = 'black';
+      document.querySelector('#countdownText').style.color = 'black';
+      document.documentElement.style.setProperty('--stroke', 'black');
+    }
   }
 
   function reset_animation() {
@@ -181,6 +200,13 @@ export default function Home() {
         </div>
 
         <h2 id="points">Points: {userPoints}</h2>
+
+        <div className={styles.dark}>
+            <label class="switch">
+              <input type="checkbox" onChange={() => {toggleDark()}}></input>
+              <span class="slider round"></span>
+            </label>
+        </div>
 
       </main>
     </div>
