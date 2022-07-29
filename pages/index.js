@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
-import { points } from '../logic/points.js'
+import { points, getFace } from '../logic/points.js'
 import { useEffect, useState } from 'react';
 import image from '../image.jpeg'
 
@@ -15,6 +15,18 @@ export default function Home() {
   const [incorrectText1, setIncorrectText1] = useState('');
   const [iteration, setIteration] = useState(0);
   const [clickable, setClickable] = useState(true);
+  const [title, setTitle] = useState('Choose the REAL human');
+
+  const [img0, setImg0] = useState(image);
+  const [img1, setImg1] = useState(image);
+
+  function end() {
+    console.log('here')
+    document.querySelector('#countdown').style.display = 'none';
+    document.querySelector('#points').style.display = 'none';
+    document.querySelector(`.${styles.title}`).style.display = 'none';
+    document.querySelector(`.${styles.grid}`).style.display = 'none';
+  }
 
   function reset_animation() {
     var el = document.querySelector('svg circle');
@@ -36,7 +48,18 @@ export default function Home() {
     setIncorrectText1('');
   }
 
+  function setFaces() {
+    setImg0(getFace());
+    setImg1(getFace());
+  }
+
+  function resetBorders() {
+    document.querySelectorAll('.photo')[0].style.cssText = "border: ;";
+    document.querySelectorAll('.photo')[1].style.cssText = "border: ;";
+  }
+
   useEffect(() => {
+    if (iteration == 0 && countdown == 10) setFaces();
     setTimeout(() => {
       if (countdown-1 == 0) {
         document.querySelector('svg circle').style.animationPlayState = 'paused';
@@ -46,13 +69,22 @@ export default function Home() {
       if (countdown >= 1) setCountdown(countdown-1);
 
       if (countdown == 0) {
-        result();
+        if (iteration == 1) {
+          end();
+          return;
+        }
+
         setCountdown(10);
         if (iteration%2 == 0) {
           setClickable(false);
+          result();
         } else {
+          setTitle('Choose the REAL human')
           resetText();
           setClickable(true);
+          setFaces();
+          setSelected(-1);
+          resetBorders();
         }
         setIteration(iteration+1);
         reset_animation();
@@ -70,15 +102,19 @@ export default function Home() {
     
     if (selected >= 0) {
       if (correct) {
+        setTitle('Well done!');
+        document.querySelectorAll('.photo')[selected].style.cssText = "border: 5px solid green;";
         (selected == 0) ? setCorrectText0(t) : setCorrectText1(t);
         setUserPoints(userPoints+10);
       } else {
+        setTitle('Not quite...');
+        document.querySelectorAll('.photo')[selected].style.cssText = "border: 5px solid red;";
         (selected == 0) ? setIncorrectText0(t) : setIncorrectText1(t);
       }
     } else {
+      setTitle('Select an option next time!');
       (correct = 0) ? setCorrectText0(t) : setCorrectText1(t);
     }
-    
   }
 
   function selectImage(selected) {
@@ -107,9 +143,7 @@ export default function Home() {
           </svg>
         </div>
 
-        <h1 className={styles.title}>
-          Choose the real human
-        </h1>
+        <h1 className={styles.title}>{title}</h1>
         
         <div className={styles.grid}>
 
@@ -117,7 +151,7 @@ export default function Home() {
             <div onClick={() => selectImage(0)} className={`${styles.card} photo`}>
               <Image
                 className={styles.img}
-                src={image}
+                src={img0}
                 alt="Picture"
                 width="300px"
                 height="300px"
@@ -132,11 +166,11 @@ export default function Home() {
             <div onClick={() => selectImage(1)} className={`${styles.card} photo`}>
               <Image
                 className={styles.img}
-                src={image}
+                src={img1}
                 alt="Picture"
                 width="300px"
                 height="300px"
-                onLoad={ () => { setCountdown(10); } }
+                onLoad={ () => {  } }
               />
             </div>
 
